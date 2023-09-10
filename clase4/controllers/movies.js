@@ -1,53 +1,53 @@
-import { MovieModel } from '../models/movie.js'
-import { validateSchema, validatePartialSchema } from '../schemas/movies.js'
+import { MovieModel } from '../models/local-file-system/movie.js';
+import { validateSchema, validatePartialSchema } from '../schemas/movies.js';
 
 export class MovieController {
-  static async getAll (req, res) {
-    const { genre } = req.query
-    const movies = await MovieModel.getAll({ genre })
-    res.json(movies)
-  }
+	static async getAll(req, res) {
+		const { genre } = req.query;
+		const movies = await MovieModel.getAll({ genre });
+		res.json(movies);
+	}
 
-  static async getById (req, res) {
-    const { id } = req.params
-    const movie = await MovieModel.getById({ id })
-    if (movie) return res.json(movie)
-    res.status(404).json({ message: 'Movie not found' })
-  }
+	static async getById(req, res) {
+		const { id } = req.params;
+		const movie = await MovieModel.getById({ id });
+		if (movie) return res.json(movie);
+		res.status(404).json({ message: 'Movie not found' });
+	}
 
-  static async create (req, res) {
-    const result = validateSchema(req.body)
+	static async create(req, res) {
+		const result = validateSchema(req.body);
 
-    if (result.error) {
-      res.status(400).json({ error: JSON.parse(result.error.message) })
-    }
-    const newMovie = await MovieModel.create({ input: result.data })
-    res.status(201).json(newMovie)
-  }
+		if (result.error) {
+			res.status(400).json({ error: JSON.parse(result.error.message) });
+		}
+		const newMovie = await MovieModel.create({ input: result.data });
+		res.status(201).json(newMovie);
+	}
 
-  static async delete (req, res) {
-    const { id } = req.params
+	static async delete(req, res) {
+		const { id } = req.params;
 
-    const result = await MovieModel.delete({ id })
+		const result = await MovieModel.delete({ id });
 
-    if (result === false) {
-      return res.status(404).json({ message: 'Movie not found' })
-    }
+		if (result === false) {
+			return res.status(404).json({ message: 'Movie not found' });
+		}
 
-    return res.json({ message: 'Movie deleted' })
-  }
+		return res.json({ message: 'Movie deleted' });
+	}
 
-  static async update (req, res) {
-    const result = validatePartialSchema(req.body)
+	static async update(req, res) {
+		const result = validatePartialSchema(req.body);
 
-    if (!result.success) {
-      return res.status(404).json({ error: JSON.parse(result.error.message) })
-    }
+		if (!result.success) {
+			return res.status(404).json({ error: JSON.parse(result.error.message) });
+		}
 
-    const { id } = req.params
+		const { id } = req.params;
 
-    const updateMovie = await MovieModel.update({ id, input: result.data })
+		const updateMovie = await MovieModel.update({ id, input: result.data });
 
-    return res.json(updateMovie)
-  }
+		return res.json(updateMovie);
+	}
 }
